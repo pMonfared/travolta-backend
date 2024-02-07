@@ -8,6 +8,10 @@ export class GetHotelsQueryParamsDto {
   @IsNotEmpty()
   destination: string;
   @IsNumber()
+  latitude: number;
+  @IsNumber()
+  longitude: number;
+  @IsNumber()
   rooms: number;
   @IsNumber()
   adults: number;
