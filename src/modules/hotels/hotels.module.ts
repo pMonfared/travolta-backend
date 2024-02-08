@@ -2,12 +2,15 @@ import { Module } from '@nestjs/common';
 import { HotelsController } from './hotels.controller';
 import { HotelsService } from './hotels.service';
 import { HttpModule } from '@nestjs/axios';
-import { AmadeusService } from './amadeus.service';
-import { AmadeusTokenService } from './amadeusToken.service';
+import { AmadeusTokenService } from './gateway/thirdParties/amadeus/amadeusToken.service';
+import { AmadeusGateway } from './gateway/thirdParties/amadeus/amadeus.gateway';
 
 @Module({
+  // Import HttpModule for making HTTP requests
   imports: [HttpModule],
+  // Declare HotelsController as a controller for this module
   controllers: [HotelsController],
-  providers: [HotelsService, AmadeusService, AmadeusTokenService],
+  // Declare HotelsService, AmadeusGateway, and AmadeusTokenService as providers for dependency injection
+  providers: [HotelsService, AmadeusGateway, AmadeusTokenService],
 })
 export class HotelsModule {}
