@@ -1,8 +1,8 @@
 // Import the required interfaces and types
 import { AxiosResponse } from 'axios';
 import { Observable, of } from 'rxjs';
-import { AmadeusAccessTokenResponse } from '../../dto/amadeusAccessTokenResponse.dto';
-import { AmadeusTokenService } from '../../amadeusToken.service';
+import { AmadeusAccessTokenResponse } from '../../api/interfaces/amadeusAccessTokenResponse.dto';
+import { AmadeusTokenService } from '../../api/amadeusToken.service';
 import { Injectable } from '@nestjs/common';
 
 // Create a manual mock for HttpService

@@ -9,9 +9,8 @@ import { GetHotelsQueryParamsDto } from './dto/getHotelsQueryParams.dto';
 import { Throttle } from '@nestjs/throttler';
 import { HotelsService } from './hotels.service';
 import { HOTEL_GATEWAY_METHOD } from './gateway/hotels.gateway';
-import { HttpService } from '@nestjs/axios';
-import { AmadeusTokenService } from './gateway/thirdParties/amadeusApi/amadeusToken.service';
 import { AmadeusGateway } from './gateway/thirdParties/amadeusApi/amadeus.gateway';
+import { AmadeusApi } from './gateway/thirdParties/amadeusApi/api/amadeus.api';
 
 @Controller('hotels')
 export class HotelsController {
@@ -19,12 +18,11 @@ export class HotelsController {
     HOTEL_GATEWAY_METHOD.AMADEUSE_API_GATEWAY;
   constructor(
     private readonly hotelsService: HotelsService,
-    private readonly http: HttpService,
-    private readonly amadeusTokenService: AmadeusTokenService,
+    private readonly amadeusApi: AmadeusApi,
   ) {
     this.hotelsService.registerHotelsGateway(
       this.hotel_gateway_method,
-      new AmadeusGateway(this.http, this.amadeusTokenService),
+      new AmadeusGateway(this.amadeusApi),
     );
   }
   // Override default configuration for Rate limiting and duration.
@@ -41,6 +39,8 @@ export class HotelsController {
       dto,
       this.hotel_gateway_method,
     );
+
+    console.log('hotels', hotels);
 
     return hotels;
   }

@@ -1,29 +1,21 @@
-// import { GetHotelOffersResponseDto } from './getHotelOffersResponse.dto';
+import { HotelModel } from '../models/hotel.model';
+import { HotelAddressDto } from './hotelAddress.dto';
+import { HotelDistanceDto } from './hotelDistance.dto';
 
 export class GetHotelResponseDto {
   readonly name: string;
   readonly hotelId: string;
-  readonly address: HotelAddress;
-  readonly distance: HotelDistance;
+  readonly address: HotelAddressDto;
+  readonly distance: HotelDistanceDto;
+  readonly availablity: boolean = false;
+  readonly offers: Array<any> = [];
 
-  constructor(
-    name: string,
-    hotelId: string,
-    address: HotelAddress,
-    distance: HotelDistance,
-  ) {
-    this.name = name;
-    this.hotelId = hotelId;
-    this.address = address;
-    this.distance = distance;
+  constructor(hotelModel: HotelModel) {
+    this.name = hotelModel.name;
+    this.hotelId = hotelModel.hotelId;
+    this.address = hotelModel.address;
+    this.distance = hotelModel.distance;
+    this.availablity = hotelModel.availabilty;
+    this.offers = hotelModel.offers;
   }
-}
-
-class HotelAddress {
-  countryCode: string;
-}
-
-class HotelDistance {
-  value: number;
-  unit: string;
 }

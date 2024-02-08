@@ -1,68 +1,55 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { AmadeusTokenService } from './amadeusToken.service';
-import { GetHotelResponseDto } from '../../../dto/getHotelResponse.dto';
 import { GetHotelsQueryParamsDto } from '../../../dto/getHotelsQueryParams.dto';
-import { GetHotelOffersQueryParamsDto } from '../../../dto/getHotelOffersQueryParams.dto';
-import * as moment from 'moment';
-import { GetHotelOffersResponseDto } from '../../../dto/getHotelOffersResponse.dto';
 import { HotelsGateway } from '../../hotels.gateway';
+import { AmadeusApi } from './api/amadeus.api';
+import { GetHotelResponseDto } from 'src/modules/hotels/dto/getHotelResponse.dto';
 
 @Injectable()
 export class AmadeusGateway implements HotelsGateway {
-  constructor(
-    private readonly http: HttpService,
-    private readonly amadeusTokenService: AmadeusTokenService,
-  ) {}
+  constructor(private readonly amadeusApi: AmadeusApi) {}
 
   // Method to fetch hotels based on geographic coordinates
   async getHotels(
     params: GetHotelsQueryParamsDto,
   ): Promise<GetHotelResponseDto[]> {
     try {
-      // Retrieve access token
-      const accessToken = await this.amadeusTokenService.getAccessToken();
-      // Make request to Amadeus API for hotel data
-      const res = await this.http.axiosRef.get(
-        `https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-geocode?latitude=${params.latitude}&longitude=${params.longitude}&radius=5&radiusUnit=KM&hotelSource=ALL`,
-        { headers: { Authorization: `Bearer ${accessToken}` } },
-      );
-      // Map response data to DTO
-      const hotelsDto = res.data?.data?.map(
-        (p: any) =>
-          new GetHotelResponseDto(p.name, p.hotelId, p.address, p.distance),
-      );
-      return hotelsDto;
-    } catch (err) {
-      // Handle errors
-      throw new Error(
-        err?.message + ': ' + JSON.stringify(err?.response?.data),
-      );
-    }
-  }
-  // Method to fetch hotel offers based on query parameters
-  async getHotelOffers(
-    params: GetHotelOffersQueryParamsDto,
-  ): Promise<GetHotelOffersResponseDto[]> {
-    try {
-      // Retrieve access token
-      const accessToken = await this.amadeusTokenService.getAccessToken();
-      // Format check-in and check-out dates
-      const checkInString = moment(params.checkIn).format('YYYY-MM-DD');
-      const checkOutString = moment(params.checkOut).format('YYYY-MM-DD');
-      // Construct URL for fetching hotel offers
-      const url = `https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=${params.hotelIds.length > 1 ? params.hotelIds.join(',') : params.hotelIds[0]}&adults=${params.adults}&checkInDate=${checkInString}&checkOutDate=${checkOutString}&roomQuantity=${params.rooms}&paymentPolicy=NONE&bestRateOnly=true`;
-      // Make request to Amadeus API for hotel offers
-      const res = await this.http.axiosRef.get(url, {
-        headers: { Authorization: `Bearer ${accessToken}` },
+      const hotels = await this.amadeusApi.getHotelListByGeoCode({
+        latitude: params.latitude,
+        longitude: params.longitude,
       });
-      // Map response data to DTO
-      const hotelOffersDto = res.data?.data?.map(
-        (p: any) =>
-          new GetHotelOffersResponseDto(p.hotel, p.available, p.offers),
-      );
 
-      return hotelOffersDto;
+      // const hotelsIds = hotels.map((p) => p.hotelId);
+
+      const hotelList: GetHotelResponseDto[] = [];
+
+      for (let i = 0; i < hotels.length; i++) {
+        const hotel = hotels[i];
+
+        try {
+          const hotelsOffers = await this.amadeusApi.getHotelOffers({
+            adults: params.adults,
+            checkIn: params.checkIn,
+            checkOut: params.checkOut,
+            hotelIds: [hotel.hotelId],
+            rooms: params.rooms,
+            children: params.children,
+          });
+
+          const hotelOffer = hotelsOffers.find(
+            (item) => item.hotelId === hotel.hotelId,
+          );
+          if (hotelOffer) {
+            hotel.updateOffers(hotelOffer.offers);
+            hotel.updateAvailabilty(hotelOffer.available);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+
+        hotelList.push(new GetHotelResponseDto(hotel));
+      }
+
+      return hotelList;
     } catch (err) {
       // Handle errors
       throw new Error(

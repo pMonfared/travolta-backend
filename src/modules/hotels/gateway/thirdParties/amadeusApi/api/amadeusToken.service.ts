@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { AmadeusAccessTokenResponse } from './dto/amadeusAccessTokenResponse.dto';
+import { AmadeusAccessTokenResponse } from './interfaces/amadeusAccessTokenResponse.dto';
 
 @Injectable()
 export class AmadeusTokenService {

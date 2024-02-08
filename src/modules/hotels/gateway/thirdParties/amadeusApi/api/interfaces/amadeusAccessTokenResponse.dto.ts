@@ -1,4 +1,4 @@
-export class AmadeusAccessTokenResponse {
+export interface AmadeusAccessTokenResponse {
   access_token: string;
   token_type: string;
   expires_in: number;

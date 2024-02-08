@@ -8,8 +8,8 @@ import { AmadeusGateway } from '../gateway/thirdParties/amadeusApi/amadeus.gatew
 import {
   MockAmadeusTokenService,
   MockHttpService,
-} from '../gateway/thirdParties/amadeusApi/tests/mocks/mockAmadeusService';
-import { AmadeusTokenService } from '../gateway/thirdParties/amadeusApi/amadeusToken.service';
+} from '../gateway/thirdParties/amadeusApi/tests/mocks/mockAmadeusTokenService';
+import { AmadeusTokenService } from '../gateway/thirdParties/amadeusApi/api/amadeusToken.service';
 
 describe('HotelsController', () => {
   let controller: HotelsController;
