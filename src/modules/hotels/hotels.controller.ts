@@ -9,14 +9,14 @@ import { GetHotelsQueryParamsDto } from './dto/getHotelsQueryParams.dto';
 import { Throttle } from '@nestjs/throttler';
 import { HotelsService } from './hotels.service';
 import { HOTEL_GATEWAY_METHOD } from './gateway/hotels.gateway';
-import { AmadeusGateway } from './gateway/thirdParties/amadeus/amadeus.gateway';
 import { HttpService } from '@nestjs/axios';
-import { AmadeusTokenService } from './gateway/thirdParties/amadeus/amadeusToken.service';
+import { AmadeusTokenService } from './gateway/thirdParties/amadeusApi/amadeusToken.service';
+import { AmadeusGateway } from './gateway/thirdParties/amadeusApi/amadeus.gateway';
 
 @Controller('hotels')
 export class HotelsController {
   private readonly hotel_gateway_method: HOTEL_GATEWAY_METHOD =
-    HOTEL_GATEWAY_METHOD.AMADEUSE_DOT_COM_GATEWAY;
+    HOTEL_GATEWAY_METHOD.AMADEUSE_API_GATEWAY;
   constructor(
     private readonly hotelsService: HotelsService,
     private readonly http: HttpService,

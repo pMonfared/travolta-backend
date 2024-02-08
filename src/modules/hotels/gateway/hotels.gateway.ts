@@ -9,6 +9,8 @@ export abstract class HotelsGateway {
 
 export enum HOTEL_GATEWAY_METHOD {
   INTERNAL_GATEWAY = 'internal_gateway',
-  AMADEUSE_DOT_COM_GATEWAY = 'amadeuse_gateway',
-  BOOKING_DOT_COM_GATEWAY = 'booking_dot_com_gateway',
+  AMADEUSE_API_GATEWAY = 'amadeuse_api_gateway',
+  BOOKING_API_GATEWAY = 'booking_api_gateway',
+
+  INVALID_METHOD = 'invalid',
 }
